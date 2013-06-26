@@ -139,10 +139,13 @@ GEM
     uglifier (2.0.1)
       execjs (>= 0.3.0)
       multi_json (~> 1.0, >= 1.0.2)
-    websocket-rails (0.1.7)
+    websocket-rails (0.4.7)
+      em-synchrony
       faye-websocket
+      hiredis
       rack
       rails
+      redis
       thin
     yajl-ruby (1.1.0)
 

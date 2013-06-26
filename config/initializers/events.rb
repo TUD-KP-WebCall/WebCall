@@ -1,8 +1,8 @@
 WebsocketRails.setup do |config|
   # config.log_level = :debug
   # config.log_path = "#{Rails.root}/log/websocket_rails.log"
-  # config.standalone = false
-  # config.synchronize = false
+  config.standalone = false
+  config.synchronize = false
 end
 
 WebsocketRails::EventMap.describe do
