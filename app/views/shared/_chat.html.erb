@@ -8,7 +8,7 @@ $('#chat_room').hide();
 
 <div id="chat_room">
 
-	<div id="chat" class="well">
+	<div id="chat_info" class="well">
 		<div class="message">
 			<label class="label label-info" id ='current_user' ><%= current_user.username%></label>:&nbsp;&nbsp;Hello!
 		</div>
@@ -54,7 +54,5 @@ jQuery(function() {
 window.chatController = new Chat.Controller("<%= request.host %>:<%= request.port %>/websocket",true);
 <!-- alert(window.chatController); -->
 })
-
-
 <% end %>
 </div>
