@@ -68,7 +68,7 @@ class Participant
     @connection
 
 class WebRTC
-  constructor: (@meetingId, name = 'Guest ('+Utils.GUID().split('-')[0]+')', userToken = Utils.GUID()) ->
+  constructor: (@meetingId, name, userToken = Utils.GUID()) ->
     @participants = {}
     @localStream
     @channel = new Channel ['meetings', @meetingId, 'stream-control'].join '/'
@@ -77,6 +77,7 @@ class WebRTC
       identifier: userToken + '_' + @channel.getClientId()
       userToken: userToken
       clientId: @channel.getClientId()
+    EventBroker.fire('rtc.local.user.available', @whoami)
     @channel.subscribe (message) =>
       @processChannelMessages message
     @privateChannel = new Channel ['meetings', @meetingId, @whoami.identifier].join '/'
@@ -221,9 +222,25 @@ class WebRTC
 
 @WebRTC = WebRTC
 
+startMeeting = (meetingToken, userName, userToken) ->
+  window.meeting = new WebRTC(meetingToken, userName, userToken)
+
+askForUserName = () ->
+  userName = bootbox.prompt('Hello Guest, please enter a name:', 'Cancel', 'Start!', (userName) =>
+    if userName?
+      $('.me .user-name').append('(' + userName + ')')
+      startMeeting(meetingToken, userName, userToken)
+    else
+      bootbox.alert('No Name? No Conference!')
+  , 'Guest '+Utils.GUID().split('-')[0])
+
 $(->
   try 
-    window.meeting = new WebRTC(meetingToken, userName, userToken)
+    if (@location?.pathname?.search(/conferences/gi)) > 0
+      if userName?
+        window.meeting = new WebRTC(meetingToken, userName, userToken)
+      else
+        askForUserName()
   catch error
     console.log(error)
   finally

@@ -11,6 +11,7 @@ end
   var userToken = <%= current_user ? "\"".html_safe+current_user.token+"\"".html_safe : "null" %>;
   var userName = <%= current_user ? "\"".html_safe+current_user.username+"\"".html_safe : "null" %>;
 </script>
+
 <h2><%= @meeting.title %></h2>
 
 <div class="container">
@@ -28,29 +29,42 @@ end
 						<a class="accordion-toggle" data-toggle="collapse" data-parent="#controlBox" href="#chat"> Chat </a>
 					</div>
 					<div id="chat" class="accordion-body collapse" style="height: 0px; ">
-						<div id="chatDiv" style="width:100px; height:100px">
-							The Chat Div
+						<div class="accordion-inner">
+						<div id="chatDiv" style="height:200px;padding-bottom: 10px;">
+							
+						</div>
+						<br class="bar-info" />
+						<select id ="user-list" class="to-chat">
+							<option class=""> EveryOne </option>
+							<option class=""> two </option>
+						</select>
+						<input type="text" class="" id="message"/>
+						<button id="send" class="btn btn-primary hide">
+							Send
+						</button>
 						</div>
 					</div>
 				</div>
-			</div>
+      </div>    
 
-			<div class="accordion-group">
-				<div class="accordion-heading">
-					<a class="accordion-toggle" data-toggle="collapse" data-parent="#controlBox" href="#participant-list"> Participants </a>
-				</div>
-				<div id="participant-list" class="accordion-body collapse in">
-					<div class="accordion-inner">
-  					<div class="participant-list-user me">
-  						<span class="user-name"><%= current_user ? current_user.username : "Me" %></span>
+      <div class="accordion" id="control-participant-list" style="margin:0px;padding:0px">
+  			<div class="accordion-group">
+  				<div class="accordion-heading">
+  					<a class="accordion-toggle" data-toggle="collapse" data-parent="#control-participant-list" href="#participant-list"> Participants</a>
+  				</div>
+  				<div id="participant-list" class="accordion-body collapse in">
+  					<div class="accordion-inner">
+    					<div class="participant-list-user me">
+    						<span class="user-name">Me <%= current_user ? "(" + current_user.username + ")" : "" %></span>
+    					</div>
   					</div>
-					</div>
-				</div>
+  				</div>
+  			</div>
 			</div>
 		</div>
 	</div>
-	<!--chat box end-->
 </div>
+
 <% if @meeting.id == -1 %>
 <div class="input-append">
 	<b>Notify via e-mail:</b>
@@ -62,3 +76,6 @@ end
 </div><br />
 <% end %>
 <%= link_to 'Back', meetings_path, :class => 'btn' %>
+
+
+

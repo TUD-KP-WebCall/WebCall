@@ -1,12 +1,13 @@
 # Place all the behaviors and hooks related to the matching controller here.
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
+
 window.Chat = {}
 
 class Chat.User
   constructor: (@user)->
   serialize:=>{
-	  source_user: @user
+	  user_name: @user
   }
     
 class Chat.Controller
@@ -16,59 +17,59 @@ class Chat.Controller
        <div class="message" style="display:none">
           <label class="label">
              #{message.user_name}
-          </label>:&nbsp;&nbsp;
-             #{message.msg_body}
+          </label>:&nbsp;#{message.msg_body}
         </div>
       """
     $(html)
-       
-  constructor: (url,useWebsocket) ->
-    # $('#chat_room').hide()
+  
+  
+  userListTemplate: (userList) ->
+    userHtml = "<option>ALL</option>"
+    for user in userList
+      userHtml = userHtml + "<option> #{user.user_name} </option>" unless user.user_name == @user.user
+    $(userHtml) 
+      
+  constructor: (@localUser) ->
     @messageQueue = []
-    @dispatcher = new WebSocketRails(url,useWebsocket)
+    @dispatcher = new WebSocketRails(location.host+"/websocket", true)
     @dispatcher.on_open = @getUserList
     @bindEvents()
     @target_user = 'ALL'
       
   getUserList: =>
-    current_user = $('#current_user').text()
-    @user = new Chat.User(current_user)
+    @user = new Chat.User(@localUser.name)
     @dispatcher.trigger 'new_user', @user.serialize()
 		  
   bindEvents:=>
-    that = this
-    $('.toTalk').on 'click', (event) ->
-      that.target_user = $(this).text()
-      $('.control-label').html """Type your message _To: #{$(this).text()}"""
+    @dispatcher.bind 'user_list', @updateUserList
     $('#send').on 'click', @sendMessage
-    $('#message').keypress (e) -> $('#send').click() if e.keyCode == 13
+    $('#message').keypress (e) -> 
+      if e.keyCode == 13
+        e.preventDefault()
+        $('#send').click()
     @dispatcher.bind 'new_message', @newMessage
-    $('#toAll').on 'click', (e)=>
-      that.target_user = "ALL"
-      $('.control-label').html """Type your message:"""
+    
+   
+  updateUserList: (userList) =>
+    $('#user-list').html @userListTemplate(userList)
    
   newMessage: (message) =>
     @messageQueue.push message
-    @shiftMessageQueue() if @messageQueue.length > 15
     TARGET_USER  = message.target_user
-    # console.log TARGET_USER
     if message.target_user == 'ALL' or message.user_name == @user.user or TARGET_USER ==@user.user
       @appendMessage message
       
   appendMessage: (message) =>
     std_message = @messageTemplete(message)
-    $('#chat').append(std_message)
+    $('#chatDiv').prepend(std_message)
     std_message.slideDown 80
 
   sendMessage: (event) =>
     event.preventDefault()
     message = $('#message').val()
+    this.target_user = $('.to-chat').val()
     @dispatcher.trigger 'new_message',{user_name:@user.user,msg_body:message,target_user:@target_user}
-    # console.log @target_user
     $('#message').val('')
-   
-  shiftMessageQueue: =>
-    @messageQueue.shift()
-    $('#chat div.messages:first').slideDown 100, ->
-      $(this).remove()
- 
+
+ EventBroker.on 'rtc.local.user.available', (user) =>
+   @chatController = new Chat.Controller(user)
