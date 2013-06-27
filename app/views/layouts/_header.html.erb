@@ -40,14 +40,18 @@
 					</li>
 					
 					<li><%= link_to 'Account Information', current_user %></li>
-					
-					<li>
 					</ul>
-					<p class="navbar-text pull-right">
+					<ul class="nav pull-right">
+					<li>
 					<%= link_to "Log Out", signout_path, method: "delete" %>
-					</p></li>
+					</li>
+					</ul>
 				<% else %>
-				
+				<ul class="nav pull-right">
+          <li>
+          <%= link_to "Log In", signin_path %>
+          </li>
+          </ul>
 
 				<% end %>
 			

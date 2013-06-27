@@ -6,13 +6,6 @@
 end
 %>
 
-<%= javascript_tag do %>
-jQuery(function() {
-window.chatController = new Chat.Controller("<%= request.host %>:<%= request.port %>/websocket",true);
-<!-- alert(window.chatController); -->
-})
-<% end %>
-
 <script type="text/javascript">
   var meetingToken =  "<%= @meeting.token %>";
   var userToken = <%= current_user ? "\"".html_safe+current_user.token+"\"".html_safe : "null" %>;
@@ -36,10 +29,8 @@ window.chatController = new Chat.Controller("<%= request.host %>:<%= request.por
 						<a class="accordion-toggle" data-toggle="collapse" data-parent="#controlBox" href="#chat"> Chat </a>
 					</div>
 					<div id="chat" class="accordion-body collapse" style="height: 0px; ">
-						<div id="chatDiv" style="height:200px;overflow:scroll;padding-bottom: 10px;">
-							<div class="messages" style="width:200px;overflow:auto;word-wrap: break-word;">
-								<label class="label label-info" id ='current_user' ><%= current_user.username%></label>:&nbsp;&nbsp;Hello!
-							</div>
+						<div class="accordion-inner">
+						<div id="chatDiv" style="height:200px;padding-bottom: 10px;">
 							
 						</div>
 						<br class="bar-info" />
@@ -47,36 +38,33 @@ window.chatController = new Chat.Controller("<%= request.host %>:<%= request.por
 							<option class=""> EveryOne </option>
 							<option class=""> two </option>
 						</select>
-						<textarea type="text" class="input-xlarge" id="message" style="width:200px"></textarea>
+						<input type="text" class="" id="message"/>
 						<button id="send" class="btn btn-primary hide">
 							Send
 						</button>
+						</div>
 					</div>
 				</div>
+      </div>    
 
-
-			</div>
-
-			<div class="accordion-group">
-				<div class="accordion-heading">
-					<a class="accordion-toggle" data-toggle="collapse" data-parent="#controlBox" href="#participant-list"> Participants</a>
-				</div>
-				<div id="participant-list" class="accordion-body collapse in">
-					<div class="accordion-inner">
-  					<div class="participant-list-user me">
-  						<ul class="btn-group btn-group-vertical dropdown-submenu" >
-						<li class="btn">
-							Active
-						</li>
-						</ul>
+      <div class="accordion" id="control-participant-list" style="margin:0px;padding:0px">
+  			<div class="accordion-group">
+  				<div class="accordion-heading">
+  					<a class="accordion-toggle" data-toggle="collapse" data-parent="#control-participant-list" href="#participant-list"> Participants</a>
+  				</div>
+  				<div id="participant-list" class="accordion-body collapse in">
+  					<div class="accordion-inner">
+    					<div class="participant-list-user me">
+    						<span class="user-name">Me <%= current_user ? "(" + current_user.username + ")" : "" %></span>
+    					</div>
   					</div>
-					</div>
-				</div>
+  				</div>
+  			</div>
 			</div>
 		</div>
 	</div>
-	<!--chat box end-->
 </div>
+
 <% if @meeting.id == -1 %>
 <div class="input-append">
 	<b>Notify via e-mail:</b>

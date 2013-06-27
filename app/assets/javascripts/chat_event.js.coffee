@@ -17,8 +17,7 @@ class Chat.Controller
        <div class="message" style="display:none">
           <label class="label">
              #{message.user_name}
-          </label>:&nbsp;&nbsp;
-             #{message.msg_body}
+          </label>:&nbsp;#{message.msg_body}
         </div>
       """
     $(html)
@@ -27,24 +26,27 @@ class Chat.Controller
   userListTemplate: (userList) ->
     userHtml = "<option>ALL</option>"
     for user in userList
-      userHtml = userHtml + "<option> #{user.user_name} </option>" unless user.user_name ==$('#current_user').text()
+      userHtml = userHtml + "<option> #{user.user_name} </option>" unless user.user_name == @user.user
     $(userHtml) 
       
-  constructor: (url,useWebsocket) ->
+  constructor: (@localUser) ->
     @messageQueue = []
-    @dispatcher = new WebSocketRails(url,useWebsocket)
+    @dispatcher = new WebSocketRails(location.host+"/websocket", true)
     @dispatcher.on_open = @getUserList
     @bindEvents()
     @target_user = 'ALL'
       
   getUserList: =>
-    @user = new Chat.User(userName)
+    @user = new Chat.User(@localUser.name)
     @dispatcher.trigger 'new_user', @user.serialize()
 		  
   bindEvents:=>
     @dispatcher.bind 'user_list', @updateUserList
     $('#send').on 'click', @sendMessage
-    $('#message').keypress (e) -> $('#send').click() if e.keyCode == 13
+    $('#message').keypress (e) -> 
+      if e.keyCode == 13
+        e.preventDefault()
+        $('#send').click()
     @dispatcher.bind 'new_message', @newMessage
     
    
@@ -59,7 +61,7 @@ class Chat.Controller
       
   appendMessage: (message) =>
     std_message = @messageTemplete(message)
-    $('.messages').prepend(std_message)
+    $('#chatDiv').prepend(std_message)
     std_message.slideDown 80
 
   sendMessage: (event) =>
@@ -69,4 +71,5 @@ class Chat.Controller
     @dispatcher.trigger 'new_message',{user_name:@user.user,msg_body:message,target_user:@target_user}
     $('#message').val('')
 
- 
+ EventBroker.on 'rtc.local.user.available', (user) =>
+   @chatController = new Chat.Controller(user)

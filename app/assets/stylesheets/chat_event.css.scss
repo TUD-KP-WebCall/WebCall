@@ -6,5 +6,19 @@
 }
 #chat {/*the chat window*/
   height: 290px;
-  overflow: auto;
+}
+
+#chat .accordion-inner > * {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#chat .accordion-inner > input {
+  width: 100%;
+  height: 30px;
+  box-sizing: border-box;
+}
+
+#chatDiv {
+  overflow: scroll;
 }
