@@ -86,6 +86,7 @@ class WebRTC
     window.addEventListener 'beforeunload', () =>
       @_sayGoodBye()
       undefined
+    @getUserMedia()
   
   getIdByConnection: (connection) ->
     return guid for guid, c of @connections when c is connection 
@@ -244,6 +245,5 @@ $(->
   catch error
     console.log(error)
   finally
-    window.meeting?.getUserMedia()
     undefined  
 )
