@@ -37,7 +37,7 @@ class MeetingsController < ApplicationController
   # GET /meetings/1.json
   def show
     @meeting = Meeting.find(params[:id])
-
+    puts params
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: {:status => "200 OK", :result => @meeting} }
@@ -93,7 +93,8 @@ class MeetingsController < ApplicationController
   # DELETE /meetings/1
   # DELETE /meetings/1.json
   def destroy
-    @meeting = Meeting.find(params(:id))
+    puts params
+    @meeting = Meeting.find(params[:id])
     @meeting.destroy
 
     respond_to do |format|
