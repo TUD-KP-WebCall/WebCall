@@ -32,7 +32,7 @@ class EventBroker
       
   fire: (evt, args...) ->
     if @_handlers[evt]?
-      fn args for fn in @_handlers[evt]
+      fn.apply(this, args) for fn in @_handlers[evt]
       undefined 
 
 @EventBroker = new EventBroker()
