@@ -1,12 +1,16 @@
+participantMuteClick = (e) ->
+  $(e.target).toggleClass('icon-volume-up').toggleClass('icon-volume-off')
+
 participantAdded = (participant) =>
-  $('#participant-list .participant-list-user')
+  $('#participant-list .participant-list-user.hide')
   .clone()
-  .removeClass('me')
+  .removeClass('hide')
   .find('span')
   .text(participant.whoami.name)
   .parent()
   .attr('id', 'userlist-entry-'+participant.whoami.identifier)
   .appendTo('#participant-list .accordion-inner')
+  .find('i').click(participantMuteClick)
 
 participantRemoved = (participant) =>
   $('#userlist-entry-'+participant.whoami.identifier).remove()

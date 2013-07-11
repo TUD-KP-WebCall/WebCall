@@ -30,9 +30,9 @@ class EventBroker
     @_handlers = @_handlers[evt].filter (tFn) ->
       tFn isnt fn 
       
-  fire: (evt, data) ->
+  fire: (evt, args...) ->
     if @_handlers[evt]?
-      fn data for fn in @_handlers[evt]
+      fn args for fn in @_handlers[evt]
       undefined 
 
 @EventBroker = new EventBroker()

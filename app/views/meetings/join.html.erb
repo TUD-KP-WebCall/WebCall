@@ -9,8 +9,21 @@
 <div class="container">
 	<div class="row">
 		<div class="span8" id="streams">
-			<video autoplay="autoplay" id="my-stream" class="span3 stream my-stream" muted="muted"/>
-			<video autoplay="autoplay" id="remote-stream-tmp" class="span3 stream remote-stream"/>
+			<div class="video-container my-video-container" id="my-video-container">
+			  <video autoplay="autoplay" id="my-stream" class="stream my-stream" muted="muted"/>
+		  </div>
+		  <div class="video-container remote-video-container" id="remote-video-container-tmp">
+        <div class="video-overlay remote-video-overlay">
+          <div class="btn-group btn-group-vertical">
+            <a class="btn" data-toggle="button" onClick="EventBroker.fire('rtc.user.mute.locally',$(this).parents('.video-container').attr('id'), !$(this).parents('.video-container').find('video').prop('muted'))">Mute</a>
+            <% if @is_organizer %>
+            <a class="btn" data-toggle="button" onClick="EventBroker.fire('rtc.user.mute.for.all',$(this).parents('.video-container').attr('id'), !$(this).parents('.video-container').find('video').prop('muted'))">Mute for all</a>
+            <a class="btn btn-danger" onClick="EventBroker.fire('rtc.user.kick',$(this).parents('.video-container').attr('id'))">Kick</a>
+            <%end%>
+          </div>
+        </div>
+        <video autoplay="autoplay" class="stream remote-stream"/>
+      </div>
 		</div>
 
 		<!--chat box start-->
@@ -47,8 +60,11 @@
   				<div id="participant-list" class="accordion-body collapse in">
   					<div class="accordion-inner">
     					<div class="participant-list-user me">
-    						<span class="user-name">Me <%= current_user ? "(" + current_user.username + ")" : "" %></span>
+    						<i class="icon-volume-up"></i> <span class="user-name">Me <%= current_user ? "(" + current_user.username + ")" : "" %></span><i class="icon-volume-off hide"></i>
     					</div>
+    					<div class="participant-list-user hide">
+                <i class="icon-volume-up"></i> <span class="user-name"></span>
+              </div>
   					</div>
   				</div>
   			</div>

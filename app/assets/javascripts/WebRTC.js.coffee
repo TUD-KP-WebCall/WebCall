@@ -72,6 +72,16 @@ class WebRTC
     @participants = {}
     @localStream
     @channel = new Channel ['meetings', @meetingId, 'stream-control'].join '/'
+    EventBroker.on 'rtc.user.kick', (id) =>
+      guid = id.match(/remote-video-container-(.*)/)[1]
+      @participants[guid].channel.publish
+        type: 'forcedToSayGoodBye!'
+    EventBroker.on 'rtc.user.mute.for.all', (id, muted) =>
+      guid = id.match(/remote-video-container-(.*)/)[1]
+      @channel.publish
+        type: 'mutedByOrganizer'
+        who: guid
+        muted: muted
     @whoami =
       name: name
       identifier: userToken + '_' + @channel.getClientId()
@@ -108,6 +118,11 @@ class WebRTC
             candidate: message.candidate
         when 'GoodBye!'
           @_handleGoodBye message.participant
+        when 'mutedByOrganizer':
+          $("#remote-video-container-#{message.who} video").prop("muted", message.muted)
+        when 'forcedToSayGoodBye!'
+          @_sayGoodBye()
+          document.location.href = document.location.protocol + '//' + document.location.host
     
   _createAndSendOffer: (participant) ->
     @participants[participant.identifier] = new Participant(participant)
@@ -212,16 +227,26 @@ class WebRTC
     console.error error
 
   _onRemoteStreamAdded: (guid, stream) ->
-    el = $('#remote-stream-tmp').clone().attr('id',guid)
-    attachMediaStream el[0], stream
+    el = $('#remote-video-container-tmp').clone().attr('id',"remote-video-container-#{guid}")
+    attachMediaStream el.find('video')[0], stream
     $('#streams').append($(el))
     undefined
 
   _onRemoteStreamRemoved: (guid) ->
-    $('#'+guid).remove()
+    $("#remote-video-container-#{guid}").remove()
     console.log guid, 'stream removed'
 
 @WebRTC = WebRTC
+
+EventBroker.on 'rtc.user.mute.locally', (id, muted) ->
+  muted ?= (index, oldValue) ->
+    !oldValue
+  $("##{id}").find('video').prop "muted", muted
+  
+EventBroker.on 'rtc.user.mute.for.all', (id, muted) =>
+  muted ?= (index, oldValue) ->
+    !oldValue
+  $("##{id}").find('video').prop "muted", muted
 
 startMeeting = (meetingToken, userName, userToken) ->
   window.meeting = new WebRTC(meetingToken, userName, userToken)
