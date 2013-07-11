@@ -118,7 +118,7 @@ class WebRTC
             candidate: message.candidate
         when 'GoodBye!'
           @_handleGoodBye message.participant
-        when 'mutedByOrganizer':
+        when 'mutedByOrganizer'
           $("#remote-video-container-#{message.who} video").prop("muted", message.muted)
         when 'forcedToSayGoodBye!'
           @_sayGoodBye()
@@ -242,7 +242,7 @@ EventBroker.on 'rtc.user.mute.locally', (id, muted) ->
   muted ?= (index, oldValue) ->
     !oldValue
   $("##{id}").find('video').prop "muted", muted
-  
+
 EventBroker.on 'rtc.user.mute.for.all', (id, muted) =>
   muted ?= (index, oldValue) ->
     !oldValue
