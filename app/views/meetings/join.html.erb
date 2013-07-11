@@ -1,11 +1,3 @@
-<% unless @meeting
-	@meeting = Meeting.new
-	@meeting.id = -1
-	@meeting.token = params['token']
-	@meeting.title = 'Ad-hoc Meeting'
-end
-%>
-
 <script type="text/javascript">
   var meetingToken =  "<%= @meeting.token %>";
   var userToken = <%= current_user ? "\"".html_safe+current_user.token+"\"".html_safe : "null" %>;

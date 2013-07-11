@@ -105,6 +105,13 @@ class MeetingsController < ApplicationController
 
   def join
     @meeting = Meeting.where("token = ?", params[:token]).last
+    if !@meeting
+      @meeting = Meeting.new(:title => "Ad-hoc Meeting", :token => params[:token])
+      @meeting.user = current_user
+      @meeting.save(:validate => false)
+    end
+    
+    @is_organizer = @meeting.user == current_user
 
     respond_to do |format|
       format.html # join.html.erb

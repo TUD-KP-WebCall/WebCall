@@ -19,7 +19,7 @@ class Meeting < ActiveRecord::Base
   
   private 
   def create_token
-    self.token = SecureRandom.uuid
+    self.token ||= SecureRandom.uuid
   end
   
   def check_meeting_time?
