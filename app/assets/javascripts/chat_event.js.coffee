@@ -61,8 +61,10 @@ class Chat.Controller
       
   appendMessage: (message) =>
     std_message = @messageTemplete(message)
-    $('#chatDiv').prepend(std_message)
-    std_message.slideDown 80
+    ($('#chatDiv').append(std_message))
+    #$.when($('#chatDiv').append(std_message)).then
+    #($('#chatDiv').scrollTop($('#chatDiv')[0].scrollHeight))
+    std_message.slideDown 20
 
   sendMessage: (event) =>
     event.preventDefault()

@@ -2,6 +2,15 @@
   var meetingToken =  "<%= @meeting.token %>";
   var userToken = <%= current_user ? "\"".html_safe+current_user.token+"\"".html_safe : "null" %>;
   var userName = <%= current_user ? "\"".html_safe+current_user.username+"\"".html_safe : "null" %>;
+  
+  function chatDivScrollDown()
+  {
+    (function(){
+      window.setTimeout(arguments.callee, 50);
+      document.getElementById('chatDiv').scrollTop = document.getElementById('chatDiv').scrollHeight;
+      return;
+    })();
+  }
 </script>
 
 <h2><%= @meeting.title %></h2>
@@ -44,7 +53,7 @@
 							<option class=""> two </option>
 						</select>
 						<input type="text" class="" id="message"/>
-						<button id="send" class="btn btn-primary hide">
+						<button id="send" class="btn btn-primary hide" onclick="chatDivScrollDown()">
 							Send
 						</button>
 						</div>
