@@ -28,7 +28,7 @@ class Chat.Controller
   userListTemplate: (userList) ->
     userHtml = "<option>ALL</option>"
     for user in userList
-      userHtml = userHtml + "<option> #{user.user} </option>" unless user.user_name == @user
+      userHtml = userHtml + "<option> #{user.user} </option>" unless user.user == @user.user
     $(userHtml) 
       
   constructor: (@localUser) ->
