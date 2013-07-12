@@ -6,11 +6,13 @@ class ChatEventController < WebsocketRails::BaseController
   
   def new_message
     broadcast_message :new_message, message
+    puts "New msg:#{message}"
     # puts message
   end
 
   def add_user
     connection_store[:user] = message
+    puts "=======\n User is #{message}"
     broadcast_user_list
   end
 

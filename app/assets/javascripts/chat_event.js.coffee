@@ -6,8 +6,10 @@ window.Chat = {}
 
 class Chat.User
   constructor: (@user)->
-  serialize:=>{
+    
+  serialize:=> {
 	  user_name: @user
+	  
   }
     
 class Chat.Controller
@@ -26,7 +28,7 @@ class Chat.Controller
   userListTemplate: (userList) ->
     userHtml = "<option>ALL</option>"
     for user in userList
-      userHtml = userHtml + "<option> #{user.user_name} </option>" unless user.user_name == @user.user
+      userHtml = userHtml + "<option> #{user.user} </option>" unless user.user_name == @user
     $(userHtml) 
       
   constructor: (@localUser) ->
@@ -37,8 +39,12 @@ class Chat.Controller
     @target_user = 'ALL'
       
   getUserList: =>
-    @user = new Chat.User(@localUser.name)
-    @dispatcher.trigger 'new_user', @user.serialize()
+    # @user = new Chat.User(@localUser)
+    username = ''
+    $.each @localUser,(key,value) ->
+      username = value.name
+    @user = new Chat.User(username)
+    @dispatcher.trigger 'new_user', @user
 		  
   bindEvents:=>
     @dispatcher.bind 'user_list', @updateUserList
